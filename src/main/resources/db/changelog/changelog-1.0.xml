@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="create-table-amount" author="bank-service">
+        <createTable tableName="AMOUNTS">
+            <column name="ID" type="int" autoIncrement="true" startWith="1" incrementBy="1">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_ID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AMOUNT" type="DECIMAL" defaultValue="0">
+                <constraints checkConstraint="CHECK (AMOUNT &gt;= 0.0)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

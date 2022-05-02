@@ -1,0 +1,58 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="create-table-users" author="bank-service">
+        <createTable tableName="USERS">
+            <column name="ID" type="LONG" autoIncrement="true" startWith="1" incrementBy="1">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="PASSWORD" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-authorities" author="bank-service">
+        <createTable tableName="AUTHORITIES">
+            <column name="USER_ID" type="LONG">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="AUTHORITY" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="USER_ID"
+                                 baseTableName="AUTHORITIES"
+                                 constraintName="FK_USER_TO_AUTHORITIES"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="USERS"/>
+
+        <createIndex indexName="idx_username_authority" tableName="AUTHORITIES" unique="true">
+            <column name="USER_ID"/>
+            <column name="AUTHORITY"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="init-default-user-and-his-roles" author="bank-service">
+        <comment>User : user/pass</comment>
+        <sql>
+            INSERT INTO users (username, password, enabled) values ('user', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 1);
+            INSERT INTO authorities (user_id, authority) values (1, 'ROLE_USER');
+            INSERT INTO users (id, username, password, enabled) values (2, 'user2', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 1);
+            INSERT INTO authorities (user_id, authority) values (2, 'ROLE_USER');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
