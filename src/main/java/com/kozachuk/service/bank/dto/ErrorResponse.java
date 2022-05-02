@@ -21,8 +21,8 @@ public class ErrorResponse {
     @Override
     public String toString() {
         return "{" +
-                "message: '" + message + '\'' +
-                ", code: '" + code + '\'' +
+                "\"message\": \"" + message + '\"' +
+                ", \"code\": \"" + code + '\"' +
                 '}';
     }
 }

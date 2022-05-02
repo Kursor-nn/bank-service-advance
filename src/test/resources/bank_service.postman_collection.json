@@ -1,0 +1,668 @@
+{
+	"info": {
+		"_postman_id": "6d554220-671c-4d26-87bc-70f2fce806c4",
+		"name": "Bank Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get NotExistedUser Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "NotExistedUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"value": "user:pass",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response Status\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response Payload\", function () {\r",
+							"    if(pm.response.code === 400) {\r",
+							"        pm.expect(pm.response.json().code).to.eql(\"ERROR-CODE-0001\");\r",
+							"        pm.expect(pm.response.json().message).to.eql(\"No amount is found.\");\r",
+							"    } else {\r",
+							"        userId = pm.response.json().userId\r",
+							"        amount = pm.response.json().amount\r",
+							"\r",
+							"        pm.environment.set(\"sender_id\", userId)\r",
+							"        pm.environment.set(\"sender_amount_at_begin\", amount)\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"type": "text",
+						"value": "user:pass"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User2 Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response Status\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response Payload\", function () {\r",
+							"    if(pm.response.code === 400) {\r",
+							"        pm.expect(pm.response.json().code).to.eql(\"ERROR-CODE-0001\");\r",
+							"        pm.expect(pm.response.json().message).to.eql(\"No amount is found.\");\r",
+							"    } else {\r",
+							"        userId = pm.response.json().userId\r",
+							"        amount = pm.response.json().amount\r",
+							"\r",
+							"        pm.environment.set(\"receiver_amount_at_begin\", amount)\r",
+							"        pm.expect(userId).to.eql(2);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"value": "user:pass",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put 100 Into User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id = 1\", function () {\r",
+							"    pm.expect(pm.response.json().userId).to.eql(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Amount after Put Into\", function () {\r",
+							"    expectedAmount = pm.environment.get(\"sender_amount_at_begin\") + 100\r",
+							"    pm.expect(pm.response.json().amount).to.eql(expectedAmount);\r",
+							"    pm.environment.set(\"sender_amount_after_putin\", expectedAmount)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "user:pass",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount/100/putup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount",
+						"100",
+						"putup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Withdraw 50 from User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id = 1\", function () {\r",
+							"    pm.expect(pm.response.json().userId).to.eql(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Amount after Withdraw\", function () {\r",
+							"    expectedAmount = pm.environment.get(\"sender_amount_after_putin\") - 50\r",
+							"    pm.expect(pm.response.json().amount).to.eql(expectedAmount);\r",
+							"    pm.environment.set(\"sender_amount_after_withdraw\", expectedAmount)\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "user:pass",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount/50/withdraw",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount",
+						"50",
+						"withdraw"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User2 Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response Status\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response Payload\", function () {\r",
+							"    if(pm.response.code === 400) {\r",
+							"        pm.expect(pm.response.json().code).to.eql(\"ERROR-CODE-0001\");\r",
+							"        pm.expect(pm.response.json().message).to.eql(\"No amount is found.\");\r",
+							"    } else {\r",
+							"        amount = pm.response.json().amount\r",
+							"        expectedAmount = pm.environment.get(\"receiver_amount_at_begin\")\r",
+							"        pm.expect(amount).to.eql(expectedAmount);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"value": "user:pass",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response Status\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id = 1\", function () {\r",
+							"    pm.expect(pm.response.json().userId).to.eql(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response Payload\", function () {\r",
+							"    userId = pm.response.json().userId\r",
+							"    amount = pm.response.json().amount\r",
+							"\r",
+							"    expectedAmount = pm.environment.get(\"sender_amount_after_withdraw\")\r",
+							"\r",
+							"    pm.expect(amount).to.eql(expectedAmount);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"type": "text",
+						"value": "user:pass"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer 20 between User and User2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "user:pass",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount/20/transfer/user2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount",
+						"20",
+						"transfer",
+						"user2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "After Transfer | Get User Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id = 1\", function () {\r",
+							"    pm.expect(pm.response.json().userId).to.eql(1);\r",
+							"\r",
+							"    expectedAmount = pm.environment.get(\"sender_amount_after_withdraw\") - 20\r",
+							"    pm.expect(pm.response.json().amount).to.eql(expectedAmount);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"type": "text",
+						"value": "user:pass"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "After Transfer | Get User2 Amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Payload  Validation\", function () {\r",
+							"    pm.expect(pm.response.json().userId).to.eql(2);\r",
+							"    expectedAmount = pm.environment.get(\"receiver_amount_at_begin\") + 20\r",
+							"    pm.expect(pm.response.json().amount).to.eql(expectedAmount);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Basic",
+						"value": "user:pass",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/bank-service/amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"bank-service",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
