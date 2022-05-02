@@ -2,6 +2,7 @@ package com.kozachuk.service.bank.controller;
 
 import com.kozachuk.service.bank.dto.ErrorResponse;
 import com.kozachuk.service.bank.exceptions.CommonServiceException;
+import com.kozachuk.service.bank.exceptions.Errors;
 import com.kozachuk.service.bank.repository.entity.Amount;
 import com.kozachuk.service.bank.service.UserAmountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +27,23 @@ public class BankServiceController {
         return userAmountService.getAmountForUser(username);
     }
 
-    @PostMapping(path="amount/{amount}/add", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="amount/{amount}/putup", produces = MediaType.APPLICATION_JSON_VALUE)
     public Amount putAmountIntoAccount(Principal principal, @PathVariable("amount") BigDecimal amount) throws CommonServiceException {
         String username = principal.getName();
-        return userAmountService.putAmountIntoAccount(username, amount);
+        return userAmountService.putInto(username, amount);
     }
 
     @PostMapping(path="amount/{amount}/withdraw", produces = MediaType.APPLICATION_JSON_VALUE)
     public Amount withdrawAmountFromAccount(Principal principal, @PathVariable("amount") BigDecimal amount) throws CommonServiceException {
         String username = principal.getName();
-        return userAmountService.withdrawAmountFromAccount(username, amount);
+        return userAmountService.withdraw(username, amount);
     }
 
-
-    @PostMapping(path="amount/{amount}/{recipient}/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void transferAmountFromCurrentUserToNewUser(Principal principal, @PathVariable("amount") BigDecimal amount, @PathVariable("recipient") String recipient) throws CommonServiceException {
+    @PostMapping(path="amount/{amount}/transfer/{recipient}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void transferAmountFromCurrentUserToRecipient(Principal principal
+                                                    , @PathVariable("amount") BigDecimal amount
+                                                    , @PathVariable("recipient") String recipient)
+    throws CommonServiceException {
         String username = principal.getName();
         userAmountService.transferMoney(username, recipient, amount);
     }
@@ -48,6 +51,13 @@ public class BankServiceController {
     @ExceptionHandler({ CommonServiceException.class})
     public ResponseEntity<ErrorResponse> handleException(CommonServiceException exception) {
         ErrorResponse response = new ErrorResponse(exception.getCode(), exception.getMessage());
+        return new ResponseEntity(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler({ Exception.class})
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        ErrorResponse response = new ErrorResponse(Errors.INTERNAL_ERROR.getCode(), exception.getMessage());
         return new ResponseEntity(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }

@@ -14,29 +14,29 @@ import javax.persistence.LockModeType;
 import java.math.BigDecimal;
 
 @Component
-public class AmountBLComponent {
+public class AmountComponent {
     @Autowired
     private AmountRepo amountRepo;
 
-    @Transactional(rollbackFor = { CommonServiceException.class })
+    @Transactional(rollbackFor = { CommonServiceException.class, RuntimeException.class})
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public Amount topUpAccount(Long userId, BigDecimal extraAmounts) throws CommonServiceException{
+    public Amount putInto(Long userId, BigDecimal extraAmounts) throws CommonServiceException{
         Amount amount = topUp(userId, extraAmounts);
         return amountRepo.save(amount);
     }
 
-    @Transactional(rollbackFor = { CommonServiceException.class })
+    @Transactional(rollbackFor = { CommonServiceException.class, RuntimeException.class })
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public Amount withdraftAccount(Long userId, BigDecimal extraAmounts) throws CommonServiceException {
+    public Amount withdraft(Long userId, BigDecimal extraAmounts) throws CommonServiceException {
         Amount amount = withdraw(userId, extraAmounts);
         return amountRepo.save(amount);
     }
 
 
-    @Transactional(rollbackFor = { CommonServiceException.class })
+    @Transactional(rollbackFor = { CommonServiceException.class, RuntimeException.class })
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     public void transferAmount(Long senderId, Long recipientId, BigDecimal amount) throws CommonServiceException {
-        if(amount.compareTo(BigDecimal.ZERO) <= 0) throw new WrongAmountException();
+        if(amount.compareTo(BigDecimal.ZERO) < 0) throw new WrongAmountException();
 
         Amount senderAmount = withdraw(senderId, amount);
         Amount recipientAmount = topUp(recipientId, amount);
