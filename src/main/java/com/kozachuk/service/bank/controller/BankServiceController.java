@@ -54,7 +54,6 @@ public class BankServiceController {
         return new ResponseEntity(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler({ Exception.class})
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         ErrorResponse response = new ErrorResponse(Errors.INTERNAL_ERROR.getCode(), exception.getMessage());
