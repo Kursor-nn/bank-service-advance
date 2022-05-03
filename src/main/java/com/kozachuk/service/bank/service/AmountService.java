@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-public class UserAmountService {
+public class AmountService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -21,6 +21,12 @@ public class UserAmountService {
     @Autowired
     private AmountComponent amountComponent;
 
+    /**
+     * Get amount bu username
+     * @param username
+     * @return - amount
+     * @throws CommonServiceException
+     */
     public Amount getAmountForUser(String username) throws CommonServiceException {
         if(username == null) throw new IllegalArgumentException();
 
@@ -32,6 +38,13 @@ public class UserAmountService {
         return currentAmount;
     }
 
+    /**
+     * Operation puts amount into account
+     * @param username - account username
+     * @param amount - amount for operation
+     * @return - resulted amount
+     * @throws CommonServiceException
+     */
     public Amount putInto(String username, BigDecimal amount) throws CommonServiceException {
         if(username == null) throw new IllegalArgumentException();
         if(amount == null) throw new IllegalArgumentException();
@@ -44,6 +57,13 @@ public class UserAmountService {
         return currentAmount;
     }
 
+    /**
+     * Operation withdraws amount from account
+     * @param username - account username
+     * @param amount - amount for operation
+     * @return - resulted amount
+     * @throws CommonServiceException
+     */
     public Amount withdraw(String username, BigDecimal amount) throws CommonServiceException {
         if(username == null) throw new IllegalArgumentException();
         if(amount == null) throw new IllegalArgumentException();
@@ -56,6 +76,13 @@ public class UserAmountService {
         return currentAmount;
     }
 
+    /**
+     * Operation transfers money between users
+     * @param sender - source for amount
+     * @param recipient - target for amount
+     * @param amount - amount
+     * @throws CommonServiceException
+     */
     public void transferMoney(String sender, String recipient, BigDecimal amount) throws CommonServiceException {
         if(amount == null) throw new IllegalArgumentException();
 

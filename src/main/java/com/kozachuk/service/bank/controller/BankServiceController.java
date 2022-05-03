@@ -4,7 +4,7 @@ import com.kozachuk.service.bank.dto.ErrorResponse;
 import com.kozachuk.service.bank.exceptions.CommonServiceException;
 import com.kozachuk.service.bank.exceptions.Errors;
 import com.kozachuk.service.bank.repository.entity.Amount;
-import com.kozachuk.service.bank.service.UserAmountService;
+import com.kozachuk.service.bank.service.AmountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,24 +19,24 @@ import java.security.Principal;
 @RequestMapping("/api/v1/bank-service/")
 public class BankServiceController {
     @Autowired
-    private UserAmountService userAmountService;
+    private AmountService amountService;
 
     @GetMapping(path="amount", produces = MediaType.APPLICATION_JSON_VALUE)
     public Amount getCurrentAmount(Principal principal) throws CommonServiceException {
         String username = principal.getName();
-        return userAmountService.getAmountForUser(username);
+        return amountService.getAmountForUser(username);
     }
 
     @PostMapping(path="amount/{amount}/putup", produces = MediaType.APPLICATION_JSON_VALUE)
     public Amount putAmountIntoAccount(Principal principal, @PathVariable("amount") BigDecimal amount) throws CommonServiceException {
         String username = principal.getName();
-        return userAmountService.putInto(username, amount);
+        return amountService.putInto(username, amount);
     }
 
     @PostMapping(path="amount/{amount}/withdraw", produces = MediaType.APPLICATION_JSON_VALUE)
     public Amount withdrawAmountFromAccount(Principal principal, @PathVariable("amount") BigDecimal amount) throws CommonServiceException {
         String username = principal.getName();
-        return userAmountService.withdraw(username, amount);
+        return amountService.withdraw(username, amount);
     }
 
     @PostMapping(path="amount/{amount}/transfer/{recipient}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,7 +45,7 @@ public class BankServiceController {
                                                     , @PathVariable("recipient") String recipient)
     throws CommonServiceException {
         String username = principal.getName();
-        userAmountService.transferMoney(username, recipient, amount);
+        amountService.transferMoney(username, recipient, amount);
     }
 
     @ExceptionHandler({ CommonServiceException.class})
